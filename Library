@@ -947,19 +947,43 @@ function Library:Window(Version)
         TabButton.MouseLeave:Connect(function() if SelectedTab ~= TabButton then TabButton.TextColor3 = Library.DeselectedColor; Library.Registry[TabButton].TextColor3 = "DeselectedColor" end end)
         TabButton.MouseButton1Down:Connect(function() SelectTab(TabButton) end)
 
-        local TabComponents = New("ScrollingFrame", {
+        -- Outer frame holds left+right columns side by side; invisible, fills tab area
+        local TabComponents = New("Frame", {
             Name = Name,
             BackgroundTransparency = 1,
             Size = UDim2.fromScale(1, 1),
-            AutomaticCanvasSize = Enum.AutomaticSize.Y,
-            CanvasSize = UDim2.new(),
-            ScrollBarThickness = 0,
             Visible = false,
             Parent = TabComponentHolder
-        }) ApplyPadding(TabComponents, {L=8, R=8, B=8, T=8})
+        })
 
-        local LeftSide = New("Frame", {BackgroundTransparency = 1, AutomaticSize = Enum.AutomaticSize.Y, Size = UDim2.new(0.5, -13), Parent = TabComponents}) New("UIListLayout", {Padding = UDim.new(0, 10), Parent = LeftSide})
-        local RightSide = LeftSide:Clone() RightSide.Position = UDim2.new(0.5, 5, 0, 0) RightSide.Parent = TabComponents
+        -- Left column: independent scrolling frame
+        local LeftScroll = New("ScrollingFrame", {
+            BackgroundTransparency = 1,
+            Position = UDim2.fromOffset(8, 8),
+            Size = UDim2.new(0.5, -13, 1, -16),
+            AutomaticCanvasSize = Enum.AutomaticSize.Y,
+            CanvasSize = UDim2.new(),
+            ScrollBarThickness = 2,
+            ScrollBarImageColor3 = Library.StrokeColor,
+            Parent = TabComponents
+        })
+        AddToRegistry(LeftScroll, {ScrollBarImageColor3 = "StrokeColor"})
+
+        -- Right column: independent scrolling frame
+        local RightScroll = New("ScrollingFrame", {
+            BackgroundTransparency = 1,
+            Position = UDim2.new(0.5, 5, 0, 8),
+            Size = UDim2.new(0.5, -13, 1, -16),
+            AutomaticCanvasSize = Enum.AutomaticSize.Y,
+            CanvasSize = UDim2.new(),
+            ScrollBarThickness = 2,
+            ScrollBarImageColor3 = Library.StrokeColor,
+            Parent = TabComponents
+        })
+        AddToRegistry(RightScroll, {ScrollBarImageColor3 = "StrokeColor"})
+
+        local LeftSide = New("Frame", {BackgroundTransparency = 1, AutomaticSize = Enum.AutomaticSize.Y, Size = UDim2.new(1, 0, 0, 0), Parent = LeftScroll}) New("UIListLayout", {Padding = UDim.new(0, 10), Parent = LeftSide})
+        local RightSide = New("Frame", {BackgroundTransparency = 1, AutomaticSize = Enum.AutomaticSize.Y, Size = UDim2.new(1, 0, 0, 0), Parent = RightScroll}) New("UIListLayout", {Padding = UDim.new(0, 10), Parent = RightSide})
         if not SelectedTab then SelectTab(TabButton) end
 
         local Tab = {
@@ -1028,6 +1052,16 @@ function Library:Window(Version)
                 return Label
             end
 
+            function Section:AddDivider()
+                local Divider = New("Frame", {
+                    BackgroundColor3 = Library.StrokeColor,
+                    BorderSizePixel = 0,
+                    Size = UDim2.new(1, 0, 0, 1),
+                    Parent = SectionComponents
+                })
+                AddToRegistry(Divider, {BackgroundColor3 = "StrokeColor"})
+            end
+
             function Section:Button(Name, Callback)
                 local ButtonFrame = New("TextButton", {
                     BackgroundColor3 = Library.BackgroundColor,
@@ -1056,20 +1090,20 @@ function Library:Window(Version)
             function Section:Toggle(Name, Callback, Default)
                 local ToggleState = Default or false
                 local ToggleButton = New("TextButton", {
-                    Size = UDim2.new(1, 0, 0, 20),
+                    Size = UDim2.new(1, 0, 0, 16),
                     BackgroundTransparency = 1,
                     FontFace = Library.Font,
-                    TextSize = 14,
+                    TextSize = 13,
                     TextColor3 = Library.DeselectedColor,
                     TextXAlignment = Enum.TextXAlignment.Left,
                     Text = Name,
                     Parent = SectionComponents
-                }) ApplyPadding(ToggleButton, {L=28})
+                }) ApplyPadding(ToggleButton, {L=22})
                 AddToRegistry(ToggleButton, {TextColor3 = "DeselectedColor"})
                 local ToggleFrame = New("Frame", {
                     BackgroundColor3 = Library.BackgroundColor,
-                    Position = UDim2.fromOffset(-28, 0),
-                    Size = UDim2.fromOffset(20, 20),
+                    Position = UDim2.fromOffset(-22, 1),
+                    Size = UDim2.fromOffset(14, 14),
                     Interactable = false,
                     BorderColor3 = Library.StrokeColor,
                     Parent = ToggleButton
@@ -1105,9 +1139,9 @@ function Library:Window(Version)
 
                 local SliderLabel = New("TextLabel", {
                     BackgroundTransparency = 1,
-                    Size = UDim2.new(1, 0, 0, 40),
+                    Size = UDim2.new(1, 0, 0, 32),
                     FontFace = Library.Font,
-                    TextSize = 14,
+                    TextSize = 13,
                     TextColor3 = Library.TextColor,
                     TextXAlignment = Enum.TextXAlignment.Left,
                     TextYAlignment = Enum.TextYAlignment.Top,
@@ -1116,12 +1150,12 @@ function Library:Window(Version)
                 })
                 AddToRegistry(SliderLabel, {TextColor3 = "TextColor"})
                 local SliderAmount = New("TextBox", {
-                    Size = UDim2.fromOffset(50, 20),
+                    Size = UDim2.fromOffset(50, 16),
                     AnchorPoint = Vector2.new(1, 0),
-                    Position = UDim2.new(1, 0, 0, -2),
+                    Position = UDim2.new(1, 0, 0, 0),
                     BackgroundTransparency = 1,
                     TextXAlignment = Enum.TextXAlignment.Right,
-                    TextSize = 14,
+                    TextSize = 13,
                     PlaceholderText = "",
                     FontFace = Library.Font,
                     TextColor3 = Library.TextColor,
@@ -1129,8 +1163,8 @@ function Library:Window(Version)
                 })
                 AddToRegistry(SliderAmount, {TextColor3 = "TextColor"})
                 local SliderButton = New("TextButton", {
-                    Position = UDim2.fromOffset(0, 20),
-                    Size = UDim2.new(1, 0, 0, 20),
+                    Position = UDim2.fromOffset(0, 16),
+                    Size = UDim2.new(1, 0, 0, 8),
                     AutoButtonColor = false,
                     BackgroundColor3 = Library.BackgroundColor,
                     BorderColor3 = Library.StrokeColor,
