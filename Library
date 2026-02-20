@@ -1087,11 +1087,11 @@ function Library:Window(Version)
                 AddToRegistry(ButtonFrame, {BackgroundColor3 = "MainColor", BorderColor3 = "StrokeColor", TextColor3 = "DeselectedColor"})
                 ButtonFrame.MouseEnter:Connect(function()
                     ButtonFrame.TextColor3 = Library.TextColor; Library.Registry[ButtonFrame].TextColor3 = "TextColor"
-                    ButtonFrame.BackgroundColor3 = Library.BackgroundColor; Library.Registry[ButtonFrame].BackgroundColor3 = "BackgroundColor"
+                    ButtonFrame.BorderColor3 = Library.AccentColor
                 end)
                 ButtonFrame.MouseLeave:Connect(function()
                     ButtonFrame.TextColor3 = Library.DeselectedColor; Library.Registry[ButtonFrame].TextColor3 = "DeselectedColor"
-                    ButtonFrame.BackgroundColor3 = Library.MainColor; Library.Registry[ButtonFrame].BackgroundColor3 = "MainColor"
+                    ButtonFrame.BorderColor3 = Library.StrokeColor
                 end)
                 ButtonFrame.MouseButton1Up:Connect(function() ButtonFrame.TextColor3 = Library.TextColor; Library.Registry[ButtonFrame].TextColor3 = "TextColor" end)
                 ButtonFrame.MouseButton1Down:Connect(function() Callback(); ButtonFrame.TextColor3 = Library.DeselectedColor; Library.Registry[ButtonFrame].TextColor3 = "DeselectedColor" end)
@@ -1137,11 +1137,10 @@ function Library:Window(Version)
                 end
                 function Toggle:SetState(State) Toggle.Value = State; UpdateToggle(State); Toggle.Callback(State) end
                 ToggleButton.MouseEnter:Connect(function()
-                    ToggleButton.BackgroundTransparency = 0
-                    ToggleButton.BackgroundColor3 = Color3.fromRGB(30, 35, 28)
+                    ToggleFrame.BorderColor3 = Library.AccentColor
                 end)
                 ToggleButton.MouseLeave:Connect(function()
-                    ToggleButton.BackgroundTransparency = 1
+                    ToggleFrame.BorderColor3 = Toggle.Value and Library.AccentColor or Library.StrokeColor
                 end)
                 ToggleButton.MouseButton1Down:Connect(function() Toggle:SetState(not Toggle.Value) end)
                 Toggle:SetState(ToggleState)
@@ -1227,12 +1226,10 @@ function Library:Window(Version)
                     Slider:SetValue(Value)
                 end
                 SliderButton.MouseEnter:Connect(function()
-                    SliderButton.BackgroundColor3 = Color3.fromRGB(22, 28, 20)
-                    Library.Registry[SliderButton].BackgroundColor3 = "BackgroundColor"
+                    SliderButton.BorderColor3 = Library.AccentColor
                 end)
                 SliderButton.MouseLeave:Connect(function()
-                    SliderButton.BackgroundColor3 = Library.BackgroundColor
-                    Library.Registry[SliderButton].BackgroundColor3 = "BackgroundColor"
+                    SliderButton.BorderColor3 = Library.StrokeColor
                 end)
                 SliderButton.MouseButton1Down:Connect(function()
                     UpdateFromMouse()
@@ -1439,11 +1436,11 @@ function Library:Window(Version)
                     UpdateKeybindWindow()
                 end
                 KeybindLabel.MouseEnter:Connect(function()
-                    KeybindLabel.BackgroundTransparency = 0
-                    KeybindLabel.BackgroundColor3 = Color3.fromRGB(30, 35, 28)
+                    KeybindButton.BorderSizePixel = 1
+                    KeybindButton.BorderColor3 = Library.AccentColor
                 end)
                 KeybindLabel.MouseLeave:Connect(function()
-                    KeybindLabel.BackgroundTransparency = 1
+                    KeybindButton.BorderSizePixel = 0
                 end)
                 KeybindButton.MouseButton1Down:Connect(function() if Keybind.Listening then return end; KeybindButton.Text = "[...]"; Keybind.Listening = true end)
                 KeybindButton.MouseButton2Down:Connect(function() Keybind:Show() end)
@@ -1686,11 +1683,10 @@ function Library:Window(Version)
                 Colorpicker.Hue, Colorpicker.Sat, Colorpicker.Vib = H, S, V
                 
                 ColorpickerLabel.MouseEnter:Connect(function()
-                    ColorpickerLabel.BackgroundTransparency = 0
-                    ColorpickerLabel.BackgroundColor3 = Color3.fromRGB(30, 35, 28)
+                    ColorButton.BorderColor3 = Library.AccentColor
                 end)
                 ColorpickerLabel.MouseLeave:Connect(function()
-                    ColorpickerLabel.BackgroundTransparency = 1
+                    ColorButton.BorderColor3 = Library.StrokeColor
                 end)
                 ColorButton.MouseButton1Down:Connect(function()
                     if Library.OpenedFrames[ColorpickerFrame] == Colorpicker then
