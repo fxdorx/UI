@@ -40,7 +40,7 @@ local Library = {
     MainColor = Color3.fromRGB(20, 20, 20),
     BackgroundColor = Color3.fromRGB(15, 15, 15),
     StrokeColor = Color3.fromRGB(50, 50, 50),
-    AccentColor = Color3.fromRGB(200, 150, 225),
+    AccentColor = Color3.fromRGB(74, 103, 65),
     DeselectedColor = Color3.fromRGB(180, 180, 180),
 
     Black = Color3.new(0, 0, 0),
@@ -131,7 +131,7 @@ end
 
 function Library:UpdateColors()
     Library.DarkerAccentColor = ModifyBrightness(Library.AccentColor, -0.185)
-    local Text = `moe{ColorText("hook", Library.AccentColor)} {ColorText(Library.Version, Library.DeselectedColor)}`
+    local Text = `{ColorText("fed", Library.AccentColor)}scripts | {ColorText(Library.Version, Library.DeselectedColor)}`
     Library.Title.Text = Text
     Library.Watermark.Text = Text
 
@@ -310,7 +310,7 @@ local WatermarkText = New("TextLabel", {
     TextColor3 = Library.TextColor,
     TextStrokeTransparency = .5,
     RichText = true,
-    Text = `moehook v{Library.Version}`,
+    Text = `fedscripts | Universal`,
     ZIndex = 8,
     Parent = WatermarkTextFrame
 })
@@ -836,13 +836,13 @@ end)
 
 function Library:Window(Version)
     Library.Version = Version
-    -- Fixed size: 700x550, non-resizable, centered
+    -- Fixed size: 470x520, non-resizable, centered
     WindowFrame = New("Frame", {
         AnchorPoint = Vector2.new(.5, .5),
         Position = UDim2.fromScale(.5, .5),
         BorderColor3 = Library.StrokeColor,
         BackgroundColor3 = Library.BackgroundColor,
-        Size = UDim2.fromOffset(700, 550),
+        Size = UDim2.fromOffset(470, 520),
         Parent = ScreenGui
     }) ApplyStroke(WindowFrame); MakeDraggable(WindowFrame, nil, true)
     AddToRegistry(WindowFrame, {BackgroundColor3 = "BackgroundColor", BorderColor3 = "StrokeColor"})
@@ -884,7 +884,7 @@ function Library:Window(Version)
         TextColor3 = Library.TextColor,
         TextSize = 14,
         RichText = true,
-        Text = `moe{ColorText("hook", Library.AccentColor)} {ColorText(Version, Library.DeselectedColor)}`,
+        Text = `{ColorText("fed", Color3.fromRGB(74, 103, 65))}scripts | {ColorText(Version, Library.DeselectedColor)}`,
         Parent = TitleFrame
     }) Title.Size = UDim2.new(0, Title.TextBounds.X, 1, 0)
 
