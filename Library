@@ -1002,6 +1002,15 @@ function Library:Window(Version)
                 Parent = (SectionCount % 2 == 1) and LeftSide or RightSide
             })
             AddToRegistry(SectionFrame, {BackgroundColor3 = "MainColor", BorderColor3 = "StrokeColor"})
+            -- Accent top border line
+            local AccentLine = New("Frame", {
+                BackgroundColor3 = Library.AccentColor,
+                BorderSizePixel = 0,
+                Size = UDim2.new(1, 0, 0, 1),
+                ZIndex = SectionFrame.ZIndex + 1,
+                Parent = SectionFrame
+            })
+            AddToRegistry(AccentLine, {BackgroundColor3 = "AccentColor"})
             local SectionTitle = New("TextLabel", {
                 BackgroundColor3 = Library.BackgroundColor,
                 BorderSizePixel = 0,
@@ -1118,8 +1127,9 @@ function Library:Window(Version)
                 local Toggle = {Value = ToggleState, Type = "Toggle", Section = Section, Callback = Callback}
                 function Toggle:Tooltip(Text) AddTooltip(ToggleButton, Text) end
                 local function UpdateToggle(State)
+                    -- text is always white, never changes
                     ToggleButton.TextColor3 = Library.TextColor
-                    Library.Registry[ToggleButton].TextColor3 = "TextColor"
+                    -- only the checkbox box changes
                     ToggleFrame.BackgroundColor3 = State and Library.DarkerAccentColor or Library.BackgroundColor
                     ToggleFrame.BorderColor3 = State and Library.AccentColor or Library.StrokeColor
                     Library.Registry[ToggleFrame].BackgroundColor3 = State and "DarkerAccentColor" or "BackgroundColor"
