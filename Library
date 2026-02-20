@@ -1100,12 +1100,12 @@ function Library:Window(Version)
                     BackgroundTransparency = 1,
                     FontFace = Library.Font,
                     TextSize = 13,
-                    TextColor3 = Library.DeselectedColor,
+                    TextColor3 = Library.TextColor,
                     TextXAlignment = Enum.TextXAlignment.Left,
                     Text = Name,
                     Parent = SectionComponents
                 }) ApplyPadding(ToggleButton, {L=22})
-                AddToRegistry(ToggleButton, {TextColor3 = "DeselectedColor"})
+                AddToRegistry(ToggleButton, {TextColor3 = "TextColor"})
                 local ToggleFrame = New("Frame", {
                     BackgroundColor3 = Library.BackgroundColor,
                     Position = UDim2.fromOffset(-22, 1),
@@ -1118,8 +1118,8 @@ function Library:Window(Version)
                 local Toggle = {Value = ToggleState, Type = "Toggle", Section = Section, Callback = Callback}
                 function Toggle:Tooltip(Text) AddTooltip(ToggleButton, Text) end
                 local function UpdateToggle(State)
-                    ToggleButton.TextColor3 = State and Library.TextColor or Library.DeselectedColor
-                    Library.Registry[ToggleButton].TextColor3 = State and "TextColor" or "DeselectedColor"
+                    ToggleButton.TextColor3 = Library.TextColor
+                    Library.Registry[ToggleButton].TextColor3 = "TextColor"
                     ToggleFrame.BackgroundColor3 = State and Library.DarkerAccentColor or Library.BackgroundColor
                     ToggleFrame.BorderColor3 = State and Library.AccentColor or Library.StrokeColor
                     Library.Registry[ToggleFrame].BackgroundColor3 = State and "DarkerAccentColor" or "BackgroundColor"
@@ -1127,12 +1127,10 @@ function Library:Window(Version)
                 end
                 function Toggle:SetState(State) Toggle.Value = State; UpdateToggle(State); Toggle.Callback(State) end
                 ToggleButton.MouseEnter:Connect(function()
-                    if not Toggle.Value then ToggleButton.TextColor3 = Library.TextColor; Library.Registry[ToggleButton].TextColor3 = "TextColor" end
                     ToggleButton.BackgroundTransparency = 0
                     ToggleButton.BackgroundColor3 = Color3.fromRGB(30, 35, 28)
                 end)
                 ToggleButton.MouseLeave:Connect(function()
-                    if not Toggle.Value then ToggleButton.TextColor3 = Library.DeselectedColor; Library.Registry[ToggleButton].TextColor3 = "DeselectedColor" end
                     ToggleButton.BackgroundTransparency = 1
                 end)
                 ToggleButton.MouseButton1Down:Connect(function() Toggle:SetState(not Toggle.Value) end)
