@@ -61,8 +61,6 @@ for _, Folder in next, {"moehook", "moehook/configs", "moehook/assets"} do
 end
 
 local Assets = {
-    ["moehook/assets/resize.png"] = "rbxassetid://102131664028298",
-    ["moehook/assets/logo.png"] = "",
     ["moehook/assets/transparency.png"] = "rbxassetid://105632977311596",
 }
 
@@ -157,7 +155,7 @@ local function ApplyStroke(Object, Inner)
         Parent = New("Frame", {
             BackgroundTransparency = 1,
             Position = Inner and UDim2.fromOffset(1, 1) or UDim2.fromOffset(-1, -1),
-            Size = Inner and UDim2.new(1, -2, 1, -2) or UDim2.new(5, 10, 6, 5),
+            Size = Inner and UDim2.new(1, -2, 1, -2) or UDim2.new(1, 2, 1, 2),
             ZIndex = Object.ZIndex + 1,
             Parent = Object
         })
@@ -275,26 +273,17 @@ local Notifications = New("Frame", {
 
 local NotifTweenInfo = TweenInfo.new(.2, Enum.EasingStyle.Exponential)
 
+-- // Watermark (hidden icon, kept for compatibility)
 local WatermarkFrame = New("Frame", {
     BackgroundColor3 = Library.BackgroundColor,
     BorderColor3 = Library.StrokeColor,
     Position = UDim2.fromOffset(8, 8),
-    Size = UDim2.fromOffset(30, 30),
+    Size = UDim2.fromOffset(0, 0),
     ZIndex = 6,
+    Visible = false,
     Parent = ScreenGui
-}) ApplyStroke(WatermarkFrame)
-AddToRegistry(WatermarkFrame, {BackgroundColor3 = "BackgroundColor", BorderColor3 = "StrokeColor"})
-
-local WatermarkIcon = New("ImageLabel", {
-    BackgroundTransparency = 1,
-    Position = UDim2.fromOffset(5, 5),
-    Size = UDim2.fromOffset(20, 20),
-    Image = getcustomasset("moehook/assets/logo.png"),
-    ImageColor3 = Library.AccentColor,
-    ZIndex = 7,
-    Parent = WatermarkFrame
 })
-AddToRegistry(WatermarkIcon, {ImageColor3 = "AccentColor"})
+AddToRegistry(WatermarkFrame, {BackgroundColor3 = "BackgroundColor", BorderColor3 = "StrokeColor"})
 
 local WatermarkTextFrame = New("Frame", {
     BackgroundColor3 = Library.BackgroundColor,
@@ -302,6 +291,7 @@ local WatermarkTextFrame = New("Frame", {
     Position = UDim2.new(1, 10, 0, 0),
     Size = UDim2.fromOffset(150, 30),
     ZIndex = 7,
+    Visible = false,
     Parent = WatermarkFrame
 })
 AddToRegistry(WatermarkTextFrame, {BackgroundColor3 = "BackgroundColor", BorderColor3 = "StrokeColor"})
@@ -846,12 +836,13 @@ end)
 
 function Library:Window(Version)
     Library.Version = Version
+    -- Fixed size: 700x550, non-resizable, centered
     WindowFrame = New("Frame", {
         AnchorPoint = Vector2.new(.5, .5),
         Position = UDim2.fromScale(.5, .5),
         BorderColor3 = Library.StrokeColor,
         BackgroundColor3 = Library.BackgroundColor,
-        Size = UDim2.fromOffset(400, 400),
+        Size = UDim2.fromOffset(700, 550),
         Parent = ScreenGui
     }) ApplyStroke(WindowFrame); MakeDraggable(WindowFrame, nil, true)
     AddToRegistry(WindowFrame, {BackgroundColor3 = "BackgroundColor", BorderColor3 = "StrokeColor"})
@@ -859,36 +850,7 @@ function Library:Window(Version)
     MakeDraggable(KeybindWindow, WindowFrame)
     WindowFrame:GetPropertyChangedSignal("Visible"):Connect(UpdateKeybindWindow)
 
-    local ResizeButton = New("ImageButton", {
-        AnchorPoint = Vector2.new(1, 1),
-        Position = UDim2.fromScale(1, 1),
-        BackgroundTransparency = 1,
-        ImageColor3 = Library.StrokeColor,
-        Image = getcustomasset("moehook/assets/resize.png"),
-        Size = UDim2.fromOffset(12, 12),
-        Parent = WindowFrame
-    })
-    AddToRegistry(ResizeButton, {ImageColor3 = "StrokeColor"})
-    ResizeButton.InputBegan:Connect(function(Input)
-        if Input.UserInputType == Enum.UserInputType.MouseButton1 then
-            local StartMouse = Vector2.new(Mouse.X, Mouse.Y)
-            local StartSize = WindowFrame.AbsoluteSize
-            local StartPos = WindowFrame.AbsolutePosition
-            while InputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) do
-                local Delta = Vector2.new(Mouse.X, Mouse.Y) - StartMouse
-                local NewX = math.max(StartSize.X + Delta.X, 400)
-                local NewY = math.max(StartSize.Y + Delta.Y, 400)
-                if Library.KeepInBounds then
-                    local ScreenSize = ScreenGui.AbsoluteSize
-                    if StartPos.X + NewX > ScreenSize.X then NewX = ScreenSize.X - StartPos.X end
-                    if StartPos.Y + NewY > ScreenSize.Y then NewY = ScreenSize.Y - StartPos.Y end
-                end
-                WindowFrame.Size = UDim2.fromOffset(NewX, NewY)
-                WindowFrame.Position = UDim2.fromOffset(StartPos.X + (NewX / 2), StartPos.Y + (NewY / 2))
-                PreRender:Wait()
-            end
-        end
-    end)
+    -- No resize button
 
     Connect(InputService.InputBegan, function(Input)
         if Input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -1763,8 +1725,10 @@ function Library:ConfigManager(Window)
                 elseif Option.SetValue then Option:SetValue(Value) end
             end
         end
-        WatermarkFrame.Position = UDim2.fromOffset(Decoded["WatermarkPosition"][1], Decoded["WatermarkPosition"][2])
-        WindowFrame.Size = UDim2.fromOffset(Decoded["WindowSize"][1], Decoded["WindowSize"][2])
+        if Decoded["WatermarkPosition"] then
+            WatermarkFrame.Position = UDim2.fromOffset(Decoded["WatermarkPosition"][1], Decoded["WatermarkPosition"][2])
+        end
+        -- Window size is fixed, ignore saved size
         Library:Notify(`Config '{Name}' loaded`, "Success")
     end
 
@@ -1817,7 +1781,7 @@ function Library:ConfigManager(Window)
     }
     WindowKeybind.Active = true
     UISection:Toggle("keep window inbounds", function(Value) Library.KeepInBounds = Value end, Library.KeepInBounds)
-    UISection:Toggle("watermark", function(Value) WatermarkFrame.Visible = Value end, true)
+    UISection:Toggle("watermark", function(Value) WatermarkFrame.Visible = Value end, false)
 
 	UISection:Dropdown({
 		Name = "show keybinds when",
@@ -1882,7 +1846,6 @@ function Library:ConfigManager(Window)
             Library:UpdateColors()
         end
     }
-
 
     if isfile(AutoloadPath) then
         local AutoName = readfile(AutoloadPath)
