@@ -62,7 +62,7 @@ end
 
 local Assets = {
     ["moehook/assets/resize.png"] = "rbxassetid://102131664028298",
-    ["moehook/assets/logo.png"] = "rbxassetid://133547912349609",
+    ["moehook/assets/logo.png"] = "",
     ["moehook/assets/transparency.png"] = "rbxassetid://105632977311596",
 }
 
