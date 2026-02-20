@@ -37,14 +37,14 @@ local Library = {
     KeepInBounds = true,
 
     TextColor = Color3.fromRGB(240, 240, 240),
-    MainColor = Color3.fromRGB(20, 20, 20),
-    BackgroundColor = Color3.fromRGB(15, 15, 15),
-    StrokeColor = Color3.fromRGB(50, 50, 50),
-    AccentColor = Color3.fromRGB(74, 103, 65),
-    DeselectedColor = Color3.fromRGB(180, 180, 180),
+    MainColor = Color3.fromRGB(14, 14, 14),
+    BackgroundColor = Color3.fromRGB(10, 10, 10),
+    StrokeColor = Color3.fromRGB(45, 45, 45),
+    AccentColor = Color3.fromRGB(90, 138, 75),
+    DeselectedColor = Color3.fromRGB(160, 160, 160),
 
     Black = Color3.new(0, 0, 0),
-    Font = Font.new("rbxassetid://12187365364"), -- Inter
+    Font = Font.new("rbxasset://fonts/families/RobotoMono.json"), -- Terminal mono
 
     OpenedFrames = {},
     Keybinds = {},
@@ -886,7 +886,7 @@ function Library:Window(Version)
         TextSize = 14,
         RichText = true,
         TextXAlignment = Enum.TextXAlignment.Left,
-        Text = `{ColorText("fed", Color3.fromRGB(74, 103, 65))}scripts | {ColorText(Version, Library.DeselectedColor)}`,
+        Text = `{ColorText("fed", Color3.fromRGB(90, 138, 75))}scripts | {ColorText(Version, Library.DeselectedColor)}`,
         Parent = TitleFrame
     })
 
@@ -1064,7 +1064,7 @@ function Library:Window(Version)
 
             function Section:Button(Name, Callback)
                 local ButtonFrame = New("TextButton", {
-                    BackgroundColor3 = Library.BackgroundColor,
+                    BackgroundColor3 = Library.MainColor,
                     BorderColor3 = Library.StrokeColor,
                     AutoButtonColor = false,
                     Size = UDim2.new(1, 0, 0, 20),
@@ -1075,9 +1075,15 @@ function Library:Window(Version)
                     Text = Name,
                     Parent = SectionComponents
                 })
-                AddToRegistry(ButtonFrame, {BackgroundColor3 = "BackgroundColor", BorderColor3 = "StrokeColor", TextColor3 = "DeselectedColor"})
-                ButtonFrame.MouseEnter:Connect(function() ButtonFrame.TextColor3 = Library.TextColor; Library.Registry[ButtonFrame].TextColor3 = "TextColor" end)
-                ButtonFrame.MouseLeave:Connect(function() ButtonFrame.TextColor3 = Library.DeselectedColor; Library.Registry[ButtonFrame].TextColor3 = "DeselectedColor" end)
+                AddToRegistry(ButtonFrame, {BackgroundColor3 = "MainColor", BorderColor3 = "StrokeColor", TextColor3 = "DeselectedColor"})
+                ButtonFrame.MouseEnter:Connect(function()
+                    ButtonFrame.TextColor3 = Library.TextColor; Library.Registry[ButtonFrame].TextColor3 = "TextColor"
+                    ButtonFrame.BackgroundColor3 = Library.BackgroundColor; Library.Registry[ButtonFrame].BackgroundColor3 = "BackgroundColor"
+                end)
+                ButtonFrame.MouseLeave:Connect(function()
+                    ButtonFrame.TextColor3 = Library.DeselectedColor; Library.Registry[ButtonFrame].TextColor3 = "DeselectedColor"
+                    ButtonFrame.BackgroundColor3 = Library.MainColor; Library.Registry[ButtonFrame].BackgroundColor3 = "MainColor"
+                end)
                 ButtonFrame.MouseButton1Up:Connect(function() ButtonFrame.TextColor3 = Library.TextColor; Library.Registry[ButtonFrame].TextColor3 = "TextColor" end)
                 ButtonFrame.MouseButton1Down:Connect(function() Callback(); ButtonFrame.TextColor3 = Library.DeselectedColor; Library.Registry[ButtonFrame].TextColor3 = "DeselectedColor" end)
                 local Button = {
@@ -1164,7 +1170,7 @@ function Library:Window(Version)
                 AddToRegistry(SliderAmount, {TextColor3 = "TextColor"})
                 local SliderButton = New("TextButton", {
                     Position = UDim2.fromOffset(0, 16),
-                    Size = UDim2.new(1, 0, 0, 8),
+                    Size = UDim2.new(1, 0, 0, 12),
                     AutoButtonColor = false,
                     BackgroundColor3 = Library.BackgroundColor,
                     BorderColor3 = Library.StrokeColor,
