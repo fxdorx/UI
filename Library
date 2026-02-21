@@ -1190,10 +1190,10 @@ function Library:Window(Version)
                 })
                 AddToRegistry(SliderAmount, {TextColor3 = "TextColor"})
                 local SliderButton = New("TextButton", {
-                    Position = UDim2.fromOffset(0, 20),
+                    Position = UDim2.fromOffset(0, 16),
                     Size = UDim2.new(1, 0, 0, 14),
                     AutoButtonColor = false,
-                    BackgroundColor3 = Library.BackgroundColor,
+                    BackgroundColor3 = Color3.fromRGB(30, 30, 30),
                     BorderColor3 = Library.StrokeColor,
                     Text = "",
                     Parent = SliderLabel
