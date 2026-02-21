@@ -36,11 +36,11 @@ local Library = {
 
     KeepInBounds = true,
 
-    TextColor = Color3.fromRGB(240, 240, 240),
-    MainColor = Color3.fromRGB(14, 14, 14),
-    BackgroundColor = Color3.fromRGB(10, 10, 10),
-    StrokeColor = Color3.fromRGB(45, 45, 45),
-    AccentColor = Color3.fromRGB(90, 138, 75),
+    TextColor = Color3.fromRGB(255, 255, 255),
+    MainColor = Color3.fromRGB(28, 28, 28),
+    BackgroundColor = Color3.fromRGB(20, 20, 20),
+    StrokeColor = Color3.fromRGB(50, 50, 50),
+    AccentColor = Color3.fromRGB(26, 77, 26),
     DeselectedColor = Color3.fromRGB(160, 160, 160),
 
     Black = Color3.new(0, 0, 0),
@@ -886,7 +886,7 @@ function Library:Window(Version)
         TextSize = 14,
         RichText = true,
         TextXAlignment = Enum.TextXAlignment.Left,
-        Text = `{ColorText("fed", Color3.fromRGB(90, 138, 75))}scripts | {ColorText(Version, Library.DeselectedColor)}`,
+        Text = `{ColorText("fed", Color3.fromRGB(26, 77, 26))}scripts | {ColorText(Version, Library.DeselectedColor)}`,
         Parent = TitleFrame
     })
 
