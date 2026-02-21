@@ -1166,7 +1166,7 @@ function Library:Window(Version)
 
                 local SliderLabel = New("TextLabel", {
                     BackgroundTransparency = 1,
-                    Size = UDim2.new(1, 0, 0, 34),
+                    Size = UDim2.new(1, 0, 0, 30),
                     FontFace = Library.Font,
                     TextSize = 14,
                     TextColor3 = Library.TextColor,
@@ -1177,9 +1177,9 @@ function Library:Window(Version)
                 })
                 AddToRegistry(SliderLabel, {TextColor3 = "TextColor"})
                 local SliderAmount = New("TextBox", {
-                    Size = UDim2.fromOffset(50, 20),
+                    Size = UDim2.fromOffset(50, 16),
                     AnchorPoint = Vector2.new(1, 0),
-                    Position = UDim2.new(1, 0, 0, -2),
+                    Position = UDim2.new(1, 0, 0, 0),
                     BackgroundTransparency = 1,
                     TextXAlignment = Enum.TextXAlignment.Right,
                     TextSize = 14,
@@ -1191,9 +1191,9 @@ function Library:Window(Version)
                 AddToRegistry(SliderAmount, {TextColor3 = "TextColor"})
                 local SliderButton = New("TextButton", {
                     Position = UDim2.fromOffset(0, 16),
-                    Size = UDim2.new(1, 0, 0, 14),
+                    Size = UDim2.new(1, 0, 0, 10),
                     AutoButtonColor = false,
-                    BackgroundColor3 = Color3.fromRGB(30, 30, 30),
+                    BackgroundColor3 = Library.BackgroundColor,
                     BorderColor3 = Library.StrokeColor,
                     Text = "",
                     Parent = SliderLabel
