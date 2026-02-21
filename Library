@@ -923,11 +923,13 @@ function Library:Window(Version)
         if SelectedTab then
             SelectedTab.TextColor3 = Library.DeselectedColor
             Library.Registry[SelectedTab].TextColor3 = "DeselectedColor"
-            TabComponentHolder[SelectedTab.Name].Visible = false
+            local prev = TabComponentHolder:FindFirstChild(SelectedTab.Name)
+            if prev then prev.Visible = false end
         end
         TabButton.TextColor3 = Library.AccentColor
         Library.Registry[TabButton].TextColor3 = "AccentColor"
-        TabComponentHolder[TabButton.Name].Visible = true
+        local curr = TabComponentHolder:FindFirstChild(TabButton.Name)
+        if curr then curr.Visible = true end
         SelectedTab = TabButton
     end
 
