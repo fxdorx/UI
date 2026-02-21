@@ -27,7 +27,7 @@ local Options = {}
 
 -- // ScreenGui
 local ScreenGui = Instance.new("ScreenGui", CoreGui.RobloxGui)
-ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
 -- // Library
 local Library = {
