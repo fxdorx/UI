@@ -1075,28 +1075,41 @@ function Library:Window(Version)
 
             function Section:Button(Name, Callback)
                 local ButtonFrame = New("TextButton", {
-                    BackgroundColor3 = Library.MainColor,
+                    BackgroundColor3 = Color3.fromRGB(38, 38, 38),
                     BorderColor3 = Library.StrokeColor,
                     AutoButtonColor = false,
                     Size = UDim2.new(1, 0, 0, 20),
                     FontFace = Library.Font,
-                    TextColor3 = Library.DeselectedColor,
+                    TextColor3 = Library.TextColor,
                     TextSize = 14,
                     RichText = true,
                     Text = Name,
                     Parent = SectionComponents
                 })
-                AddToRegistry(ButtonFrame, {BackgroundColor3 = "MainColor", BorderColor3 = "StrokeColor", TextColor3 = "DeselectedColor"})
+                -- Subtle top highlight line for raised look
+                New("Frame", {
+                    BackgroundColor3 = Color3.fromRGB(58, 58, 58),
+                    BorderSizePixel = 0,
+                    Size = UDim2.new(1, 0, 0, 1),
+                    ZIndex = ButtonFrame.ZIndex + 1,
+                    Parent = ButtonFrame
+                })
+                AddToRegistry(ButtonFrame, {BorderColor3 = "StrokeColor", TextColor3 = "TextColor"})
                 ButtonFrame.MouseEnter:Connect(function()
-                    ButtonFrame.TextColor3 = Library.TextColor; Library.Registry[ButtonFrame].TextColor3 = "TextColor"
+                    ButtonFrame.BackgroundColor3 = Color3.fromRGB(48, 48, 48)
                     ButtonFrame.BorderColor3 = Library.AccentColor
                 end)
                 ButtonFrame.MouseLeave:Connect(function()
-                    ButtonFrame.TextColor3 = Library.DeselectedColor; Library.Registry[ButtonFrame].TextColor3 = "DeselectedColor"
+                    ButtonFrame.BackgroundColor3 = Color3.fromRGB(38, 38, 38)
                     ButtonFrame.BorderColor3 = Library.StrokeColor
                 end)
-                ButtonFrame.MouseButton1Up:Connect(function() ButtonFrame.TextColor3 = Library.TextColor; Library.Registry[ButtonFrame].TextColor3 = "TextColor" end)
-                ButtonFrame.MouseButton1Down:Connect(function() Callback(); ButtonFrame.TextColor3 = Library.DeselectedColor; Library.Registry[ButtonFrame].TextColor3 = "DeselectedColor" end)
+                ButtonFrame.MouseButton1Up:Connect(function()
+                    ButtonFrame.BackgroundColor3 = Color3.fromRGB(48, 48, 48)
+                end)
+                ButtonFrame.MouseButton1Down:Connect(function()
+                    ButtonFrame.BackgroundColor3 = Color3.fromRGB(28, 28, 28)
+                    Callback()
+                end)
                 local Button = {
                     Section = Section,
                 }
@@ -1161,7 +1174,7 @@ function Library:Window(Version)
 
                 local SliderLabel = New("TextLabel", {
                     BackgroundTransparency = 1,
-                    Size = UDim2.new(1, 0, 0, 32),
+                    Size = UDim2.new(1, 0, 0, 36),
                     FontFace = Library.Font,
                     TextSize = 13,
                     TextColor3 = Library.TextColor,
@@ -1186,22 +1199,41 @@ function Library:Window(Version)
                 AddToRegistry(SliderAmount, {TextColor3 = "TextColor"})
                 local SliderButton = New("TextButton", {
                     Position = UDim2.fromOffset(0, 16),
-                    Size = UDim2.new(1, 0, 0, 12),
+                    Size = UDim2.new(1, 0, 0, 16),
                     AutoButtonColor = false,
-                    BackgroundColor3 = Library.BackgroundColor,
+                    BackgroundColor3 = Color3.fromRGB(40, 40, 40),
                     BorderColor3 = Library.StrokeColor,
                     Text = "",
                     Parent = SliderLabel
                 })
-                AddToRegistry(SliderButton, {BackgroundColor3 = "BackgroundColor", BorderColor3 = "StrokeColor"})
+                -- Top highlight for raised look matching buttons
+                New("Frame", {
+                    BackgroundColor3 = Color3.fromRGB(60, 60, 60),
+                    BorderSizePixel = 0,
+                    Size = UDim2.new(1, 0, 0, 1),
+                    ZIndex = SliderButton.ZIndex + 1,
+                    Interactable = false,
+                    Parent = SliderButton
+                })
+                AddToRegistry(SliderButton, {BorderColor3 = "StrokeColor"})
                 local SliderValue = New("Frame", {
-                    BackgroundColor3 = Library.DarkerAccentColor,
+                    BackgroundColor3 = Library.AccentColor,
                     BorderSizePixel = 0,
                     Size = UDim2.fromScale(0, 1),
                     Interactable = false,
                     Parent = SliderButton
-                }) local SliderValueStroke = ApplyStroke(SliderValue, true)
-                AddToRegistry(SliderValue, {BackgroundColor3 = "DarkerAccentColor"})
+                })
+                -- Bright top edge on fill for extra pop
+                local SliderValueHighlight = New("Frame", {
+                    BackgroundColor3 = Color3.fromRGB(60, 110, 60),
+                    BorderSizePixel = 0,
+                    Size = UDim2.new(1, 0, 0, 1),
+                    ZIndex = SliderValue.ZIndex + 1,
+                    Interactable = false,
+                    Parent = SliderValue
+                })
+                local SliderValueStroke = ApplyStroke(SliderValue, true)
+                AddToRegistry(SliderValue, {BackgroundColor3 = "AccentColor"})
                 local Slider = {Value = Info.Default, Min = Info.Min, Max = Info.Max, Type = "Slider", Section = Section, Callback = Info.Callback}
                 function Slider:Tooltip(Text) AddTooltip(SliderButton, Text) end
                 local Last = nil
