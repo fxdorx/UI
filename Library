@@ -1167,7 +1167,7 @@ function Library:Window(Version)
                 local SliderLabel = New("TextLabel", {
                     BackgroundTransparency = 1,
                     ClipsDescendants = false,
-                    Size = UDim2.new(1, 0, 0, 50),
+                    Size = UDim2.new(1, 0, 0, 34),
                     FontFace = Library.Font,
                     TextSize = 13,
                     TextColor3 = Library.TextColor,
@@ -1192,7 +1192,7 @@ function Library:Window(Version)
                 AddToRegistry(SliderAmount, {TextColor3 = "TextColor"})
                 local SliderButton = New("TextButton", {
                     Position = UDim2.fromOffset(0, 20),
-                    Size = UDim2.new(1, 0, 0, 26),
+                    Size = UDim2.new(1, 0, 0, 10),
                     AutoButtonColor = false,
                     BackgroundColor3 = Color3.fromRGB(35, 35, 35),
                     BorderColor3 = Library.StrokeColor,
