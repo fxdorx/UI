@@ -137,7 +137,8 @@ function Library:UpdateColors()
 
     for Object, Properties in next, Library.Registry do
         for Property, Color in Properties do
-            Object[Property] = Library[Color] or Color
+            local v = Library[Color] or Color
+            if Object[Property] ~= v then Object[Property] = v end
         end
     end
 end
@@ -197,9 +198,10 @@ local function AddLine(Object)
 end
 
 local function IsMouseOverFrame(Frame)
-    local Pos, Size = Frame.AbsolutePosition, Frame.AbsoluteSize
-    return Mouse.X >= Pos.X and Mouse.X <= Pos.X + Size.X
-    and Mouse.Y >= Pos.Y and Mouse.Y <= Pos.Y + Size.Y
+    local px, py = Frame.AbsolutePosition.X, Frame.AbsolutePosition.Y
+    local sx, sy = Frame.AbsoluteSize.X, Frame.AbsoluteSize.Y
+    local mx, my = Mouse.X, Mouse.Y
+    return mx >= px and mx <= px + sx and my >= py and my <= py + sy
 end
 
 local function IsMouseOverOpenedFrame()
@@ -222,22 +224,21 @@ local Tooltip = New("TextLabel", {
 })
 AddToRegistry(Tooltip, {BackgroundColor3 = "MainColor", TextColor3 = "TextColor", BorderColor3 = "StrokeColor"})
 
+local TooltipConn = nil
 local function AddTooltip(Object, Text)
-    local IsHovering = false
     Object.MouseEnter:Connect(function()
-        if not IsMouseOverOpenedFrame() then
-            IsHovering = true
-            Tooltip.Text = Text
-            Tooltip.Size = UDim2.fromOffset(Tooltip.TextBounds.X + 8, 20)
-            Tooltip.Visible = true
-            while IsHovering do
-                PreRender:Wait()
-                Tooltip.Position = UDim2.fromOffset(Mouse.X + 8, Mouse.Y + 8)
-            end
-        end
+        if IsMouseOverOpenedFrame() then return end
+        if TooltipConn then TooltipConn:Disconnect(); TooltipConn = nil end
+        Tooltip.Text = Text
+        Tooltip.Size = UDim2.fromOffset(Tooltip.TextBounds.X + 8, 20)
+        Tooltip.Position = UDim2.fromOffset(Mouse.X + 8, Mouse.Y + 8)
+        Tooltip.Visible = true
+        TooltipConn = RunService.Heartbeat:Connect(function()
+            Tooltip.Position = UDim2.fromOffset(Mouse.X + 8, Mouse.Y + 8)
+        end)
     end)
     Object.MouseLeave:Connect(function()
-        IsHovering = false
+        if TooltipConn then TooltipConn:Disconnect(); TooltipConn = nil end
         Tooltip.Visible = false
     end)
 end
@@ -247,7 +248,12 @@ local function MakeDraggable(Object, DependsOnObject, IsWindow)
         if Input.UserInputType == Enum.UserInputType.MouseButton1 and (not DependsOnObject or DependsOnObject.Visible) then
             local Pos = Vector2.new(Mouse.X - Object.AbsolutePosition.X, Mouse.Y - Object.AbsolutePosition.Y)
             if IsWindow and Pos.Y > 30 then return end
-            while InputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) do
+            local DragConn
+            DragConn = RunService.Heartbeat:Connect(function()
+                if not InputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) then
+                    DragConn:Disconnect()
+                    return
+                end
                 local NewX = Mouse.X - Pos.X
                 local NewY = Mouse.Y - Pos.Y
                 if Library.KeepInBounds then
@@ -257,8 +263,7 @@ local function MakeDraggable(Object, DependsOnObject, IsWindow)
                     NewY = math.clamp(NewY, 0, ScreenSize.Y - ObjectSize.Y)
                 end
                 Object.Position = UDim2.fromOffset(NewX + (Object.Size.X.Offset * Object.AnchorPoint.X), NewY + (Object.Size.Y.Offset * Object.AnchorPoint.Y))
-                PreRender:Wait()
-            end
+            end)
         end
     end)
 end
@@ -1240,7 +1245,14 @@ function Library:Window(Version)
                 end)
                 SliderButton.MouseButton1Down:Connect(function()
                     UpdateFromMouse()
-                    while InputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) do UpdateFromMouse(); PreRender:Wait() end
+                    local SliderConn
+                    SliderConn = RunService.Heartbeat:Connect(function()
+                        if not InputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) then
+                            SliderConn:Disconnect()
+                            return
+                        end
+                        UpdateFromMouse()
+                    end)
                 end)
                 SliderAmount.FocusLost:Connect(function(EnterPressed)
                     if EnterPressed then
@@ -1615,27 +1627,33 @@ function Library:Window(Version)
 
                     table.insert(Colorpicker.ActiveConnections, SaturationFrame.InputBegan:Connect(function(Input)
                         if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
-                            while InputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) do
+                            local SatConn
+                            SatConn = RunService.Heartbeat:Connect(function()
+                                if not InputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) then
+                                    SatConn:Disconnect(); return
+                                end
                                 local RX = math.clamp((Mouse.X - SaturationFrame.AbsolutePosition.X) / SaturationFrame.AbsoluteSize.X, 0, 1)
                                 local RY = math.clamp((Mouse.Y - SaturationFrame.AbsolutePosition.Y) / SaturationFrame.AbsoluteSize.Y, 0, 1)
-                                
                                 Colorpicker.Sat = 1 - RX
                                 Colorpicker.Vib = 1 - RY
-                                
                                 UpdateColor()
-                                PreRender:Wait()
-                            end
+                            end)
+                            table.insert(Colorpicker.ActiveConnections, SatConn)
                         end
                     end))
 
                     table.insert(Colorpicker.ActiveConnections, HueSlider.InputBegan:Connect(function(Input)
                         if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
-                            while InputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) do
+                            local HueConn
+                            HueConn = RunService.Heartbeat:Connect(function()
+                                if not InputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) then
+                                    HueConn:Disconnect(); return
+                                end
                                 local RX = math.clamp((Mouse.X - HueSlider.AbsolutePosition.X) / HueSlider.AbsoluteSize.X, 0, 1)
                                 Colorpicker.Hue = RX
                                 UpdateColor()
-                                PreRender:Wait()
-                            end
+                            end)
+                            table.insert(Colorpicker.ActiveConnections, HueConn)
                         end
                     end))
 
